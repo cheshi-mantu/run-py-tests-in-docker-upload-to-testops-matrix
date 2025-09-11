@@ -46,6 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup-allure
     strategy:
+      fail-fast: false
       matrix:
         ENV_TEST_RUN: [ONEONEONE, TWOTWOTWO]
     steps:
