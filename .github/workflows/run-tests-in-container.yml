@@ -26,7 +26,7 @@ jobs:
   setup-allure:
     runs-on: ubuntu-latest
     outputs:
-      allure-env: ${{ steps.allure-context.outputs.allure-env }}
+      # allure-env: ${{ steps.allure-context.outputs.allure-env }}
       ci-env: ${{ steps.allure-context.outputs.ci-env }}
     steps:
       - name: install and configure allurectl
@@ -39,9 +39,9 @@ jobs:
         id: allure-context
         run: |
           allurectl job-run start
-          export $(allurectl job-run env)
+          # export $(allurectl job-run env)
           printenv | grep ALLURE_
-          echo "allure-env=$(allurectl job-run env | base64 -w 0)" >> $GITHUB_OUTPUT
+          # echo "allure-env=$(allurectl job-run env | base64 -w 0)" >> $GITHUB_OUTPUT
           echo "ci-env=$(allurectl ci env  | base64 -w 0)" >> $GITHUB_OUTPUT
           
 
@@ -55,11 +55,12 @@ jobs:
           # echo "${{ needs.setup-allure.outputs.allure-env }}" | base64 -d > /tmp/allure-env
           # export $(cat /tmp/allure-env)
           echo "${{ needs.setup-allure.outputs.ci-env }}" | base64 -d > /tmp/ci-env
+          cat /tmp/ci-env
           export $(cat /tmp/ci-env)
           # echo "ALLURE_JOB_RUN_ID=$(printenv ALLURE_JOB_RUN_ID)"
           # echo "ALLURE_LAUNCH_ID=$(printenv ALLURE_LAUNCH_ID)"
           printenv | grep ALLURE_
-          sleep 300
+          sleep 10
   cleanup-allure:
     runs-on: ubuntu-latest
     needs: [setup-allure, all-tests]
