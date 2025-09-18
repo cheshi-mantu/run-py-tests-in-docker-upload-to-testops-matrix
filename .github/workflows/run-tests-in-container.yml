@@ -41,6 +41,8 @@ jobs:
           export $(allurectl job-run env)
           printenv | grep ALLURE_
           echo "allure-env=$(allurectl job-run env | base64 -w 0)" >> $GITHUB_OUTPUT
+          echo "ci-env=$(allurectl ci env --encode)" >> $GITHUB_OUTPUT
+          
 
   all-tests:
     runs-on: ubuntu-latest
@@ -48,7 +50,7 @@ jobs:
     steps:
       - name: run tests in docker container
         run: |
-          # Decode and export allure environment variables
+          # Decode and export allure environment variablesß
           echo "${{ needs.setup-allure.outputs.allure-env }}" | base64 -d > /tmp/allure-env
           export $(cat /tmp/allure-env)
           echo "ALLURE_JOB_RUN_ID=$(printenv ALLURE_JOB_RUN_ID)"
