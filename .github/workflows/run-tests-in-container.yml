@@ -53,6 +53,8 @@ jobs:
           # Decode and export allure environment variablesß
           echo "${{ needs.setup-allure.outputs.allure-env }}" | base64 -d > /tmp/allure-env
           export $(cat /tmp/allure-env)
+          echo "${{ needs.setup-allure.outputs.ci-env }}" | base64 -d > /tmp/ci-env
+          export $(cat /tmp/ci-env)
           echo "ALLURE_JOB_RUN_ID=$(printenv ALLURE_JOB_RUN_ID)"
           echo "ALLURE_LAUNCH_ID=$(printenv ALLURE_LAUNCH_ID)"
           printenv | grep ALLURE_
