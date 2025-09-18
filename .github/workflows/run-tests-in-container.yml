@@ -51,7 +51,8 @@ jobs:
           # Decode and export allure environment variables
           echo "${{ needs.setup-allure.outputs.allure-env }}" | base64 -d > /tmp/allure-env
           export $(cat /tmp/allure-env)
-          printenv ALLURE_JOB_RUN_ID
+          echo "ALLURE_JOB_RUN_ID=$(printenv ALLURE_JOB_RUN_ID)"
+          echo "ALLURE_LAUNCH_ID=$(printenv ALLURE_LAUNCH_ID)"
           sleep 600
   cleanup-allure:
     runs-on: ubuntu-latest
