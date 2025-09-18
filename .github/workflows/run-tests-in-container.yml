@@ -42,7 +42,7 @@ jobs:
           export $(allurectl job-run env)
           printenv | grep ALLURE_
           echo "allure-env=$(allurectl job-run env | base64 -w 0)" >> $GITHUB_OUTPUT
-          echo "ci-env=$(allurectl ci env --encode)" >> $GITHUB_OUTPUT
+          echo "ci-env=$(allurectl ci env  | base64 -w 0)" >> $GITHUB_OUTPUT
           
 
   all-tests:
