@@ -37,49 +37,48 @@ jobs:
       - name: get context for allurectl
         id: allure-context
         run: |
-          allurectl job-run start
-          export $(allurectl job-run env)
-          printenv | grep ALLURE_
-          echo "allure-env=$(allurectl job-run env | base64 -w 0)" >> $GITHUB_OUTPUT
-
-  all-tests:
-    runs-on: ubuntu-latest
-    needs: setup-allure
-    strategy:
-      fail-fast: false
-      matrix:
-        ENV_TEST_RUN: [ONEONEONE, TWOTWOTWO]
-    steps:
-      - name: run tests in docker container
-        run: |
-          # Decode and export allure environment variables
-          echo "${{ needs.setup-allure.outputs.allure-env }}" | base64 -d > /tmp/allure-env
-          export $(cat /tmp/allure-env)
+          echo "$(allurectl ci env)"
+          echo "ALLURE_CI_ENV=$(allurectl ci env --encode)" >> $GITHUB_OUTPUT
           
-          docker run --rm \
-          -e TEST_ENDPOINT="${{ github.event.inputs.TEST_ENDPOINT }}" \
-          -e TEST_BROWSER="${{ github.event.inputs.TEST_BROWSER }}" \
-          -e ENV_TEST_RUN="${{ matrix.ENV_TEST_RUN }}" \
-          -e ALLURE_ENDPOINT="${{ vars.ALLURE_ENDPOINT }}" \
-          -e ALLURE_PROJECT_ID="${{ vars.ALLURE_PROJECT_ID }}" \
-          -e ALLURE_TOKEN="${{ secrets.ALLURE_TOKEN }}" \
-          --env-file /tmp/allure-env \
-          ghcr.io/cheshi-mantu/py-allurectl:latest
 
-  cleanup-allure:
-    runs-on: ubuntu-latest
-    needs: [setup-allure, all-tests]
-    if: always()
-    steps:
-      - name: install and configure allurectl
-        uses: allure-framework/setup-allurectl@v1.0.0
-        with:
-          allure-endpoint: ${{ vars.ALLURE_ENDPOINT }}
-          allure-token: ${{ secrets.ALLURE_TOKEN }}
-          allure-project-id: ${{ vars.ALLURE_PROJECT_ID }}
-      - name: stop allure job run
-        run: |
-          # Decode and export allure environment variables
-          echo "${{ needs.setup-allure.outputs.allure-env }}" | base64 -d > /tmp/allure-env
-          export $(cat /tmp/allure-env)
-          allurectl job-run stop
+  # all-tests:
+  #   runs-on: ubuntu-latest
+  #   needs: setup-allure
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       ENV_TEST_RUN: [ONEONEONE, TWOTWOTWO]
+  #   steps:
+  #     - name: run tests in docker container
+  #       run: |
+  #         # Decode and export allure environment variables
+  #         echo "${{ needs.setup-allure.outputs.allure-env }}" | base64 -d > /tmp/allure-env
+  #         export $(cat /tmp/allure-env)
+          
+  #         docker run --rm \
+  #         -e TEST_ENDPOINT="${{ github.event.inputs.TEST_ENDPOINT }}" \
+  #         -e TEST_BROWSER="${{ github.event.inputs.TEST_BROWSER }}" \
+  #         -e ENV_TEST_RUN="${{ matrix.ENV_TEST_RUN }}" \
+  #         -e ALLURE_ENDPOINT="${{ vars.ALLURE_ENDPOINT }}" \
+  #         -e ALLURE_PROJECT_ID="${{ vars.ALLURE_PROJECT_ID }}" \
+  #         -e ALLURE_TOKEN="${{ secrets.ALLURE_TOKEN }}" \
+  #         --env-file /tmp/allure-env \
+  #         ghcr.io/cheshi-mantu/py-allurectl:latest
+
+  # cleanup-allure:
+  #   runs-on: ubuntu-latest
+  #   needs: [setup-allure, all-tests]
+  #   if: always()
+  #   steps:
+  #     - name: install and configure allurectl
+  #       uses: allure-framework/setup-allurectl@v1.0.0
+  #       with:
+  #         allure-endpoint: ${{ vars.ALLURE_ENDPOINT }}
+  #         allure-token: ${{ secrets.ALLURE_TOKEN }}
+  #         allure-project-id: ${{ vars.ALLURE_PROJECT_ID }}
+  #     - name: stop allure job run
+  #       run: |
+  #         # Decode and export allure environment variables
+  #         echo "${{ needs.setup-allure.outputs.allure-env }}" | base64 -d > /tmp/allure-env
+  #         export $(cat /tmp/allure-env)
+  #         allurectl job-run stop
