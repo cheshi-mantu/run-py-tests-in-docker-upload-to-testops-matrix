@@ -32,8 +32,6 @@ jobs:
         uses: allure-framework/setup-allurectl@v1.0.0
         with:
           allure-endpoint: ${{ vars.ALLURE_ENDPOINT }}
-          allure-token: ${{ secrets.ALLURE_TOKEN }}
-          allure-project-id: ${{ vars.ALLURE_PROJECT_ID }}
       - name: get context for allurectl
         id: allure-context
         run: |
